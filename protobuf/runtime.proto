@@ -1,0 +1,235 @@
+syntax = "proto3";
+
+package runtime;
+
+option go_package = "runtime";
+
+service RuntimeApi {
+  // Retrieve the next spawner event to process
+  rpc ReadSpawnerEvent(Read) returns (SpawnerEvent) {}
+  // Submits a successful response back to the service invoking the request
+  rpc ResolveSpawnerEvent(SpawnerResponse) returns (Ack) {}
+  // Returns an error back to the service invoking the request
+  rpc ResolveSpawnerEventWithError(SpawnerError) returns (Ack) {}
+  // Retrieve the next lambda event to process
+  rpc ReadLambdaEvent(Read) returns (LambdaEvent) {}
+  // Submits a successful response back to the service invoking the request
+  rpc ResolveLambdaEvent(LambdaResponse) returns (Ack) {}
+  // Returns an error back to the service invoking the request
+  rpc ResolveLambdaEventWithError(LambdaError) returns (Ack) {}
+}
+
+message SpawnerEvent {
+  // Identifer for the function invocation
+  string invocation_id = 1;
+  // Identifier for the event
+  string request_id = 2;
+  // Ethereum block containing spawn events
+  EthereumBlock block = 3;
+  // Spawn events
+  repeated SpawnEvent events = 4;
+}
+
+message SpawnEvent {
+  // Function to run in the program
+  string function = 1;
+  // Hash of the transaction containing the relevant event
+  bytes transaction_hash = 2;
+  // Big endian u64
+  // Index of the transaction within the block
+  uint64 transaction_index = 3;
+  // Big endian u256
+  // Index of the log within the block
+  uint64 block_log_index = 4;
+  // Big endian u256
+  // Index of the log within the transaction
+  uint64 transaction_log_index = 5;  
+}
+
+message SpawnerResponse {
+  // Identifer for the program
+  string program_id = 1;
+  // Identifer for the function invocation
+  string invocation_id = 2;
+  // Indentifier for request
+  string request_id = 3;
+  // Spawns
+  repeated Spawn spawns = 4;  
+}
+
+message Spawn {
+  // Name of the source and transitions template to instantiate
+  string template_name = 1;
+  // Address of the source to merge with the template
+  string address = 2;  
+}
+
+message LambdaEvent {
+  // Identifier for function invocation
+  string invocation_id = 1;
+  // Identifier for the event
+  string event_id = 2;
+  // Ethereum containing lambda events
+  EthereumBlock block = 3;
+  // Lambda triggers
+  repeated LambdaTrigger triggers = 4;
+}
+
+message LambdaTrigger {
+  // Function to run in the program
+  string function = 1;
+  // Hash of the transaction containing the relevant event
+  bytes transaction_hash = 2;
+  // Index of the transaction within the block
+  uint64 transaction_index = 3;
+  // Index of the log within the block
+  uint64 block_log_index = 4;
+  // Index of the log within the transaction
+  uint64 transaction_log_index = 5;
+  // Index of the trigger in the block
+  uint32 trigger_index = 6;  
+}
+
+message SpawnerError {
+  // Identifer for the program
+  string program_id = 1;
+  // Identifer for the function invocation
+  string invocation_id = 2;
+  // Identifier for the request
+  string request_id = 3;  
+  // Error message from the
+  string error = 4;
+}
+
+message LambdaResponse {
+  // Identifer for the program
+  string program_id = 1;
+  // Identifer for the function invocation
+  string invocation_id = 2;
+  // Identifier for the event
+  string event_id = 3;
+}
+
+message LambdaError {
+  // Identifer for the program
+  string program_id = 1;
+  // Identifer for the function invocation
+  string invocation_id = 2;
+  // Identifier for the event
+  string event_id = 3;  
+  // Error message from the
+  string error = 4;
+}
+
+message Read {
+  string program_id = 1;
+}
+
+message Ack {
+  uint32 code = 1;
+}
+
+message Transaction {
+  // 256 bit hash
+  bytes hash = 1;
+  // Big endian u256
+  bytes nonce = 2;
+  // Big endian u64
+  bytes index = 3;
+  // 160 bit hash representing an Ethereum address
+  bytes from = 4;
+  // 160 bit hash representing an Ethereum address
+  bytes to = 5;
+  // Big endian u256
+  bytes value = 6;
+  // Big endian u256
+  // Price per unit of gas
+  bytes gas_price = 7;
+  // Big endian u256 integer
+  // Amount of gas used
+  bytes gas = 8;
+  // RLP encoded bytes
+  bytes input = 9;
+}
+
+message Receipt {
+  // 256 bit hash
+  bytes transaction_hash = 1;
+  // Big endian u64
+  bytes transaction_index = 2;
+  // Big endian u256
+  bytes cumulative_gas_used = 3;
+  // Big endian 256
+  bytes gas_used = 4;
+  // 256 bit hash
+  // Contract address created;
+  // None if it was a regular transaction
+  bytes contract_address = 5;
+  // Set of logs produced by this transaction
+  repeated Log logs = 6;
+  // True if this transaction failed
+  bool failed = 7;
+  // 2048 bit hash
+  bytes logs_bloom = 8;
+}
+
+message Log {
+  // 160 bit hash representing an Ethereum address
+  bytes address = 1;
+  // Vector of 256 bit hashes representing Ethereum abi log signatures
+  // indexed log parameters
+  // Array must have a maximum size of 4
+  repeated bytes topics = 2;
+  // RLP encoded bytes
+  bytes data = 3;
+  // 256 bit hash
+  bytes transaction_hash = 4;
+  // Big endian u64
+  bytes transaction_index = 5;
+  // Big endian u256
+  bytes block_log_index = 6;
+  // Big endian u256
+  bytes transaction_log_index = 7;
+  // True if this transaction failed
+  bool removed = 8;
+}
+
+message EthereumBlock {
+  // 256 bit hash
+  bytes hash = 1;
+  // Big endian u64
+  bytes number = 2;
+  // 256 bit hash
+  bytes parent_hash = 3;
+  // 256 bit hash
+  bytes uncles_hash = 4;
+  // 160 bit hash representing an Ethereum address
+  bytes author = 5;
+  // 256 bit hash
+  bytes state_root = 6;
+  // 256 bit hash
+  bytes transactions_root = 7;
+  // 256 bit hash
+  bytes receipts_root = 8;
+  // Big endian u256
+  bytes gas_used = 9;
+  // Big endian u256
+  bytes gas_limit = 10;
+  // Big endian u256
+  // Unix timestamp
+  bytes timestamp = 11;
+  // Big endian u256
+  bytes difficulty = 12;
+  // Big endian u256
+  bytes total_difficulty = 13;
+  // Big endian u256
+  bytes size = 14;
+  // 256 bit hash
+  bytes mix_hash = 15;
+  // 64 bit hash
+  bytes nonce = 16;
+  // Set of transactions executed in the block
+  repeated Transaction transactions = 17;
+  // Set of receipts produced by the transactions in the block
+  repeated Receipt receipts = 18;
+}
