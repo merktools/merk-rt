@@ -65,29 +65,62 @@ message Spawn {
 }
 
 message LambdaEvent {
-  // Identifier for function invocation
-  string invocation_id = 1;
+  // Key used to ensure the lambda event is processed exactly once
+  string idempotency_key = 1;
   // Identifier for the event
   string event_id = 2;
-  // Ethereum containing lambda events
-  EthereumBlock block = 3;
-  // Lambda triggers
-  repeated LambdaTrigger triggers = 4;
+  // Union type representing the event
+  oneof kind {
+    // Block with triggers
+    BlockEvent block = 3;
+    // Pointers for trace reversion
+    RevertEvent revert = 4;
+  }
 }
 
-message LambdaTrigger {
+message BlockEvent {
+  // Ethereum block containing lambda triggers
+  EthereumBlock block = 1;
+  // Lambda triggers
+  repeated Trigger triggers = 2;
+}
+
+message Trigger {
+  oneof kind {
+    LogTrigger log = 1;
+  }
+}
+
+message LogTrigger {
+  // Trace which the log trigger belonds to
+  string trace = 1;
   // Function to run in the program
-  string function = 1;
+  string abi = 2;
+  // Log signature
+  string signature = 3;
+  // Hash of the log signature for the trigger
+  bytes signature_hash = 4;
   // Hash of the transaction containing the relevant event
-  bytes transaction_hash = 2;
+  bytes transaction_hash = 5;
   // Index of the transaction within the block
-  uint64 transaction_index = 3;
+  uint64 transaction_index = 6;
   // Index of the log within the block
-  uint64 block_log_index = 4;
+  uint64 block_log_index = 7;
   // Index of the log within the transaction
-  uint64 transaction_log_index = 5;
+  uint64 transaction_log_index = 8;
   // Index of the trigger in the block
-  uint32 trigger_index = 6;  
+  uint32 trigger_index = 9;  
+}
+
+message RevertEvent {
+  // 256 bit hash
+  bytes from_block_hash = 1;
+  // Big endian U64
+  bytes from_block_number = 2;
+  // 256 bit hash
+  bytes to_block_hash = 3;
+  // Big endian U64
+  bytes to_block_number = 4;
 }
 
 message SpawnerError {
