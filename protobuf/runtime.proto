@@ -20,14 +20,12 @@ service RuntimeApi {
 }
 
 message SpawnerEvent {
-  // Identifer for the function invocation
-  string invocation_id = 1;
   // Identifier for the event
-  string request_id = 2;
+  string request_id = 1;
   // Ethereum block containing spawn events
-  EthereumBlock block = 3;
+  EthereumBlock block = 2;
   // Spawn events
-  repeated SpawnEvent events = 4;
+  repeated SpawnEvent events = 3;
 }
 
 message SpawnEvent {
@@ -49,12 +47,10 @@ message SpawnEvent {
 message SpawnerResponse {
   // Identifer for the program
   string program_id = 1;
-  // Identifer for the function invocation
-  string invocation_id = 2;
   // Indentifier for request
-  string request_id = 3;
+  string request_id = 2;
   // Spawns
-  repeated Spawn spawns = 4;  
+  repeated Spawn spawns = 3;  
 }
 
 message Spawn {
@@ -126,32 +122,26 @@ message RevertEvent {
 message SpawnerError {
   // Identifer for the program
   string program_id = 1;
-  // Identifer for the function invocation
-  string invocation_id = 2;
   // Identifier for the request
-  string request_id = 3;  
+  string request_id = 2;  
   // Error message from the
-  string error = 4;
+  string error = 3;
 }
 
 message LambdaResponse {
   // Identifer for the program
   string program_id = 1;
-  // Identifer for the function invocation
-  string invocation_id = 2;
   // Identifier for the event
-  string event_id = 3;
+  string event_id = 2;
 }
 
 message LambdaError {
   // Identifer for the program
   string program_id = 1;
-  // Identifer for the function invocation
-  string invocation_id = 2;
   // Identifier for the event
-  string event_id = 3;  
+  string event_id = 2;
   // Error message from the
-  string error = 4;
+  string error = 3;
 }
 
 message Read {
