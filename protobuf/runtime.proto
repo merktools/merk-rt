@@ -61,16 +61,18 @@ message Spawn {
 }
 
 message LambdaEvent {
+  // Identifier for the request
+  string request_id = 1;
   // Key used to ensure the lambda event is processed exactly once
-  string idempotency_key = 1;
+  string idempotency_key = 2;
   // Identifier for the event
-  string event_id = 2;
+  string event_id = 3;
   // Union type representing the event
   oneof kind {
     // Block with triggers
-    BlockEvent block = 3;
+    BlockEvent block = 4;
     // Pointers for trace reversion
-    RevertEvent revert = 4;
+    RevertEvent revert = 5;
   }
 }
 
@@ -131,15 +133,15 @@ message SpawnerError {
 message LambdaResponse {
   // Identifer for the program
   string program_id = 1;
-  // Identifier for the event
-  string event_id = 2;
+  // Identifier for the request
+  string request_id = 2;
 }
 
 message LambdaError {
   // Identifer for the program
   string program_id = 1;
-  // Identifier for the event
-  string event_id = 2;
+  // Identifier for the request
+  string request_id = 2;
   // Error message from the
   string error = 3;
 }
