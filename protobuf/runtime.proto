@@ -13,6 +13,8 @@ service RuntimeApi {
   rpc ResolveSpawnerEventWithError(SpawnerError) returns (Ack) {}
   // Retrieve the next lambda event to process
   rpc ReadLambdaEvent(Read) returns (LambdaEvent) {}
+  // Starts a lambda event stream
+  rpc LambdaEvents(Read) returns (stream LambdaEvent) {}
   // Submits a successful response back to the service invoking the request
   rpc ResolveLambdaEvent(LambdaResponse) returns (Ack) {}
   // Returns an error back to the service invoking the request
