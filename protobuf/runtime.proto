@@ -14,7 +14,7 @@ service RuntimeApi {
   // Retrieve the next lambda event to process
   rpc ReadLambdaEvent(Read) returns (LambdaEvent) {}
   // Starts a lambda event stream
-  rpc LambdaEvents(Read) returns (stream LambdaEvent) {}
+  rpc LambdaEvents(stream LambdaEventStreamStateMachine) returns (stream LambdaEvent) {}
   // Submits a successful response back to the service invoking the request
   rpc ResolveLambdaEvent(LambdaResponse) returns (Ack) {}
   // Returns an error back to the service invoking the request
@@ -60,6 +60,34 @@ message Spawn {
   string template_name = 1;
   // Address of the source to merge with the template
   string address = 2;  
+}
+
+message LambdaEventStreamStateMachine {
+  oneof kind {
+    AuthMessage auth = 1;
+    LambdaResponse response = 2;
+    LambdaError error = 3;
+  }
+}
+
+message AuthMessage {
+  string program_id = 1;
+}
+
+message LambdaResponse {
+  // Identifer for the program
+  string program_id = 1;
+  // Identifier for the request
+  string request_id = 2;
+}
+
+message LambdaError {
+  // Identifer for the program
+  string program_id = 1;
+  // Identifier for the request
+  string request_id = 2;
+  // Error message from the
+  string error = 3;
 }
 
 message LambdaEvent {
@@ -128,22 +156,6 @@ message SpawnerError {
   string program_id = 1;
   // Identifier for the request
   string request_id = 2;  
-  // Error message from the
-  string error = 3;
-}
-
-message LambdaResponse {
-  // Identifer for the program
-  string program_id = 1;
-  // Identifier for the request
-  string request_id = 2;
-}
-
-message LambdaError {
-  // Identifer for the program
-  string program_id = 1;
-  // Identifier for the request
-  string request_id = 2;
   // Error message from the
   string error = 3;
 }
