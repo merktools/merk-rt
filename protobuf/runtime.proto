@@ -64,7 +64,7 @@ message Spawn {
 
 message LambdaEventResponse {
   oneof kind {
-    LambdaResponse response = 1;
+    LambdaResponse success = 1;
     LambdaError error = 2;
   }
 }
