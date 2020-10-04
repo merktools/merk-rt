@@ -14,7 +14,7 @@ service RuntimeApi {
   // Retrieve the next lambda event to process
   rpc ReadLambdaEvent(Read) returns (LambdaEvent) {}
   // Starts a lambda event stream
-  rpc LambdaEvents(stream LambdaEventStreamStateMachine) returns (stream LambdaEvent) {}
+  rpc LambdaEvents(stream LambdaEventResponse) returns (stream LambdaEvent) {}
   // Submits a successful response back to the service invoking the request
   rpc ResolveLambdaEvent(LambdaResponse) returns (Ack) {}
   // Returns an error back to the service invoking the request
@@ -62,11 +62,10 @@ message Spawn {
   string address = 2;  
 }
 
-message LambdaEventStreamStateMachine {
+message LambdaEventResponse {
   oneof kind {
-    AuthMessage auth = 1;
-    LambdaResponse response = 2;
-    LambdaError error = 3;
+    LambdaResponse response = 1;
+    LambdaError error = 2;
   }
 }
 
