@@ -16,7 +16,7 @@ service RuntimeApi {
   // Starts a lambda event stream
   rpc LambdaEvents(stream LambdaEventResponse) returns (stream LambdaEvent) {}
   // Submits a successful response back to the service invoking the request
-  rpc ResolveLambdaEvent(LambdaResponse) returns (Ack) {}
+  rpc ResolveLambdaEvent(LambdaSuccess) returns (Ack) {}
   // Returns an error back to the service invoking the request
   rpc ResolveLambdaEventWithError(LambdaError) returns (Ack) {}
 }
@@ -64,7 +64,7 @@ message Spawn {
 
 message LambdaEventResponse {
   oneof kind {
-    LambdaResponse success = 1;
+    LambdaSuccess success = 1;
     LambdaError error = 2;
   }
 }
@@ -73,7 +73,7 @@ message AuthMessage {
   string program_id = 1;
 }
 
-message LambdaResponse {
+message LambdaSuccess {
   // Identifer for the program
   string program_id = 1;
   // Identifier for the request
