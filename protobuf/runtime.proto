@@ -10,7 +10,7 @@ service RuntimeApi {
 }
 
 message LambdaEventResponse {
-  oneof kind {
+  oneof result {
     LambdaSuccess success = 1;
     LambdaError error = 2;
   }
