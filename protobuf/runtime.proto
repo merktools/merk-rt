@@ -16,31 +16,24 @@ message LambdaEventResponse {
   }
 }
 
-message LambdaSuccess {
-  // Identifier for the request
-  string request_id = 1;
-}
+message LambdaSuccess {}
 
 message LambdaError {
-  // Identifier for the request
-  string request_id = 1;
-  // Error message from the
-  string error = 2;
+  // Error message from the lambda
+  string error = 1;
 }
 
 message LambdaEvent {
-  // Identifier for the request
-  string request_id = 1;
   // Key used to ensure the lambda event is processed exactly once
-  string idempotency_key = 2;
+  string idempotency_key = 1;
   // Identifier for the event
-  string event_id = 3;
+  string event_id = 2;
   // Union type representing the event
   oneof kind {
     // Block with triggers
-    BlockEvent block = 4;
+    BlockEvent block = 3;
     // Pointers for trace reversion
-    RevertEvent revert = 5;
+    RevertEvent revert = 4;
   }
 }
 
