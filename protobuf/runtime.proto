@@ -16,10 +16,7 @@ message LambdaEventResponse {
   }
 }
 
-message LambdaSuccess {
-  // Optional message
-  string msg = 1;
-}
+message LambdaSuccess {}
 
 message LambdaError {
   // Error message from the lambda
